@@ -793,6 +793,21 @@ console.log(calcRectArea(5, 6));
 // expected output: 30
 ```
 
+## JavaScript Maps
+
+-   holds key-value pairs where keys can be any datatype
+-   remembers the original insertion order of the keys
+
+### JavaScript Objects vs. Maps
+
+|           | Object                            | Map                           |
+| --------- | --------------------------------- | ----------------------------- |
+| Iterable  | Not directly iterable             | Directly iterable             |
+| Size      | Do not have a size property       | Have a size property          |
+| Key Types | Keys must be Strings (or Symbols) | Keys can be any datatype      |
+| Key Order | Keys are not well ordered         | Keys are ordered by insertion |
+| Defaults  | Have default keys                 | Do not have default keys      |
+
 ## `target` and `currentTarget` Event Properties
 
 |                                      | `target`                    | `currentTarget`                           |
@@ -847,14 +862,21 @@ function hide(evt) {
 ul.addEventListener('click', hide, false);
 ```
 
-## `for...of`
+## Iterating Over Arrays
+
+### Summary of Looping Options
+
+| JS                                                                                                                          | Type      | Definition                                                                                                                                                                                                                                                                                                                                                                                                                          | Use Cases                                                                                                                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [do...while](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/do...while)                       | Statement | <ul> <li>a loop that executes until test condition evaluates to false.</li> <li>The condition is evaluated after executing the statement, resulting in the specified statement executing at least once</li></ul>                                                                                                                                                                                                                    | <ul><li></li></ul>                                                                                                                                                                                     |
+| [for...in](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in)                           | Statement | <ul> <li>iterates over all "enumerable properties" of an object that are keyed by strings.</li> <li>The condition is evaluated after executing the statement, resulting in the specified statement executing at least once</li><li>iterates over the <i>entire</i> prototype chain (the objects it inherits)</li></ul>                                                                                                              | <ul><li>debugging to easily check the properties on an object (to console)</li><li>in cases where data is key-value pairs with properties as "keys" to check particular values of those keys</li></ul> |
+| [for...of](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of)                           | Statement | <ul> <li>Most often, I'll be using `for...in`, not `for...of`</li><li>iterates over all "iterable objects" including <ul><li>String</li><li>Array</li><li>array-like objects (e.g. arguments or NodeList)</li><li>TypedArray</li><li>Map</li><li>Set</li><li>user-defined variables</li></ul></li> <li>invokes custom iteration hook with statements to be executed for the value of each distinct property of the object</li></ul> |                                                                                                                                                                                                        |
+| [Array.prototype.forEach()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach) | Method    | <ul> <li>executes a provided function once for each array element. </li><li>does not mutate the array on which it is called. (However, `callbackFn` may do so) </li></ul>                                                                                                                                                                                                                                                           |                                                                                                                                                                                                        |
+| [Array.prototype.map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)         | Method | <ul><li><strong>creates a new array</strong> populated with results of calling a provided function on every element in the calling array</li></ul>
+
+### `for...of`
 
 -   loops through values of an iterable object (Arrays, Strings, Maps, NodeLists, _and more!_)
-
-| classic for loop | for...of loop |
-| ---------------- | ------------- |
-
-|
 
 for (let i = 0; i < myArray.length; i++) {
 myArray[i] +
