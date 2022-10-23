@@ -735,6 +735,24 @@ savePoint
 
 # My JS Notes
 
+## [File API](https://developer.mozilla.org/en-US/docs/Web/API/File_API)
+
+### Concepts and Usage
+
+-   enables web apps to access files and their contents
+
+### Interfaces
+
+#### Blob
+
+"Binary Large Object" =
+
+-   file-like object of immutable, raw data.
+-   can be
+    -   read as text
+    -   or binary dada
+    -   converted into a `ReadableStream` so its methods can be used for processing the data.
+
 ## What is a Callback Function?
 
 ### Functions are Objects
@@ -792,6 +810,91 @@ function calcRectArea(width, height) {
 console.log(calcRectArea(5, 6));
 // expected output: 30
 ```
+
+## Promises
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
+
+promise =
+
+-   returned object to which you attach callbacks, instead of passing callbacks into a function
+-   object representing eventual completion or failure of an asynchronous operation.
+
+_Without_ promise:
+
+```
+function successCallback(result) {
+  console.log(`Audio file ready at URL: ${result}`);
+}
+
+function failureCallback(error) {
+  console.error(`Error generating audio file: ${error}`);
+}
+
+createAudioFileAsync(audioSettings, successCallback, failureCallback);
+```
+
+_with_ promise:
+
+```
+createAudioFileAsync(audioSettings).then(successCallback, failureCallback);
+```
+
+unlike _passed-in_ callbacks, promises have some guarantees:
+
+-   callbacks with `then()` will never be invoked before completion of current run of JavaScript event loop
+-   will be invoked even if added _after_ the success/failure of the asynchronous operation that the promise represents.
+-   multiple callbacks may be added by calling `then()` several times. They'll be called in order (promise chaining).
+
+### callback pyramid of doom vs. promise chain
+
+pyramid:
+
+```
+doSomething(function (result) {
+  doSomethingElse(result, function (newResult) {
+    doThirdThing(newResult, function (finalResult) {
+      console.log(`Got the final result: ${finalResult}`);
+    }, failureCallback);
+  }, failureCallback);
+}, failureCallback);
+```
+
+promise chain:
+
+```
+doSomething()
+  .then(function (result) {
+    return doSomethingElse(result);
+  })
+  .then(function (newResult) {
+    return doThirdThing(newResult);
+  })
+  .then(function (finalResult) {
+    console.log(`Got the final result: ${finalResult}`);
+  })
+  .catch(failureCallback);
+
+```
+
+promise chain with arrow functions:
+
+```
+doSomething()
+  .then((result) => doSomethingElse(result))
+  .then((newResult) => doThirdThing(newResult))
+  .then((finalResult) => {
+    console.log(`Got the final result: ${finalResult}`);
+  })
+  .catch(failureCallback);
+```
+
+### always return results
+
+reminder of arrow function shorthand. These are the same:
+`() => x` is short for `() => { return x; })`
+
+
 
 ## JavaScript Maps
 
@@ -866,13 +969,13 @@ ul.addEventListener('click', hide, false);
 
 ### Summary of Looping Options
 
-| JS                                                                                                                          | Type      | Definition                                                                                                                                                                                                                                                                                                                                                                                                                          | Use Cases                                                                                                                                                                                              |
-| --------------------------------------------------------------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [do...while](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/do...while)                       | Statement | <ul> <li>a loop that executes until test condition evaluates to false.</li> <li>The condition is evaluated after executing the statement, resulting in the specified statement executing at least once</li></ul>                                                                                                                                                                                                                    | <ul><li></li></ul>                                                                                                                                                                                     |
-| [for...in](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in)                           | Statement | <ul> <li>iterates over all "enumerable properties" of an object that are keyed by strings.</li> <li>The condition is evaluated after executing the statement, resulting in the specified statement executing at least once</li><li>iterates over the <i>entire</i> prototype chain (the objects it inherits)</li></ul>                                                                                                              | <ul><li>debugging to easily check the properties on an object (to console)</li><li>in cases where data is key-value pairs with properties as "keys" to check particular values of those keys</li></ul> |
-| [for...of](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of)                           | Statement | <ul> <li>Most often, I'll be using `for...in`, not `for...of`</li><li>iterates over all "iterable objects" including <ul><li>String</li><li>Array</li><li>array-like objects (e.g. arguments or NodeList)</li><li>TypedArray</li><li>Map</li><li>Set</li><li>user-defined variables</li></ul></li> <li>invokes custom iteration hook with statements to be executed for the value of each distinct property of the object</li></ul> |                                                                                                                                                                                                        |
-| [Array.prototype.forEach()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach) | Method    | <ul> <li>executes a provided function once for each array element. </li><li>does not mutate the array on which it is called. (However, `callbackFn` may do so) </li></ul>                                                                                                                                                                                                                                                           |                                                                                                                                                                                                        |
-| [Array.prototype.map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)         | Method | <ul><li><strong>creates a new array</strong> populated with results of calling a provided function on every element in the calling array</li></ul>
+| JS                                                                                                                          | Type      | Definition                                                                                                                                                                                                                                                                                                                                                                          | Use Cases                                                                                                                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [do...while](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/do...while)                       | Statement | <ul> <li>a loop that executes until test condition evaluates to false.</li> <li>The condition is evaluated after executing the statement, resulting in the specified statement executing at least once</li></ul>                                                                                                                                                                    | <ul><li></li></ul>                                                                                                                                                                                     |
+| [for...in](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in)                           | Statement | <ul> <li>Most often, I'll be using `for...of`, not `for...in`</li><li>iterates over all "enumerable properties" of an object that are keyed by strings.</li> <li>The condition is evaluated after executing the statement, resulting in the specified statement executing at least once</li><li>iterates over the <i>entire</i> prototype chain (the objects it inherits)</li></ul> | <ul><li>debugging to easily check the properties on an object (to console)</li><li>in cases where data is key-value pairs with properties as "keys" to check particular values of those keys</li></ul> |
+| [for...of](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of)                           | Statement | <ul> <li>iterates over all "iterable objects" including <ul><li>String</li><li>Array</li><li>array-like objects (e.g. arguments or NodeList)</li><li>TypedArray</li><li>Map</li><li>Set</li><li>user-defined variables</li></ul></li> <li>invokes custom iteration hook with statements to be executed for the value of each distinct property of the object</li></ul>              |                                                                                                                                                                                                        |
+| [Array.prototype.forEach()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach) | Method    | <ul> <li>executes a provided function once for each array element. </li><li>does not mutate the array on which it is called. (However, `callbackFn` may do so) </li></ul>                                                                                                                                                                                                           |                                                                                                                                                                                                        |
+| [Array.prototype.map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)         | Method    | <ul><li><strong>creates a new array</strong> populated with results of calling a provided function on every element in the calling array</li></ul>                                                                                                                                                                                                                                  |
 
 ### `for...of`
 
@@ -888,7 +991,7 @@ myArray[i] +
 <body>
 
 <h2>JavaScript For Of Loop</h2>
-<p>The for of statement loops through the values of any iterable object:</p>
+<p>The for...of statement loops through the values of any iterable object:</p>
 
 <p id="demo"></p>
 
@@ -1001,6 +1104,42 @@ function myFunction() {
 myFunction();
 ```
 
+## JavaScript try...catch...finally
+
+The `try...catch...finally` statements combo handles errors without stopping JavaScript.
+
+When an **error** occurs, JS will **stop** and generate an error message,
+
+-   term is "**throws an exception.**"
+-   The **error object** has two properties: **name** and **message**.
+
+| Statement | defines...                                    |
+| --------- | --------------------------------------------- |
+| `try`     | the code block to run (to try).               |
+| `catch`   | a code block to handle any error.             |
+| `finally` | a code block to run regardless of the result. |
+| `throw`   | a custom error.                               |
+
+_catch and finally are optional, but you must use one of them._
+
+```
+try {
+  tryCode - Code block to run
+}
+catch(err) {
+  catchCode - Code block to handle errors
+}
+finally {
+  finallyCode - Code block to be executed regardless of the try result
+}
+```
+
+---
+
+## [Javascript Module Syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
+
+---
+
 # My React Notes
 
 React Snippets .md
@@ -1046,6 +1185,8 @@ https://leetcode.com/problems/sum-of-unique-elements/discuss/2100297/One-line-Ja
 ## JS Async/Await
 
 **`async` and `await` make promises easier to write**
+
+The keyword `async` before a function makes the function return a promise.
 
 -   `async` makes a function return a Promise
 -   `await` makes a function wait for a Promise
